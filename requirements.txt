@@ -1,0 +1,4 @@
+cherrypy
+flup
+python-ldap; python_version < '3.0'
+python-ldap>=3.0.0b4; python_version >= '3.0'
