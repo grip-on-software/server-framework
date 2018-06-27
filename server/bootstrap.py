@@ -10,6 +10,7 @@ import cherrypy.daemon
 from gatherer.config import Configuration
 from gatherer.log import Log_Setup
 from .authentication import Authentication
+from .dispatcher import HostDispatcher
 
 class Bootstrap(object):
     """
@@ -47,6 +48,8 @@ class Bootstrap(object):
                             help='Path to store logs at in production')
         parser.add_argument('--auth', choices=Authentication.get_types(),
                             default=auth, help='Authentication scheme')
+        parser.add_argument('--host', default=None,
+                            help='Hostname to validate before allowing access')
         parser.add_argument('--port', type=int, default=8080,
                             help='Port for the server to listen on')
         parser.add_argument('--daemonize', action='store_true', default=False,
@@ -151,7 +154,9 @@ class Bootstrap(object):
                 'request.show_tracebacks': self.args.debug
             },
             '/': {
-                'tools.sessions.on': True
+                'tools.sessions.on': True,
+                'request.dispatch': HostDispatcher(host=self.args.host,
+                                                   port=self.args.port)
             }
         }
         cherrypy.config.update({'server.socket_port': self.args.port})
