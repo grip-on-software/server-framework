@@ -5,6 +5,7 @@ Module that provides authentication schemes.
 from builtins import object
 import crypt
 import logging
+import re
 try:
     import pwd
 except ImportError:
@@ -187,6 +188,11 @@ class LDAP(Authentication):
             raise ImportError('Unable to use LDAP; install the python-ldap package')
 
         self._group = self._retrieve_ldap_group()
+        if config.has_option('ldap', 'whitelist'):
+            self._whitelist = re.split(r'\s*(?<!\\),\s*',
+                                       self.config.get('ldap', 'whitelist'))
+        else:
+            self._whitelist = []
 
     def _retrieve_ldap_group(self):
         logging.info('Retrieving LDAP group list using manager DN...')
@@ -218,8 +224,8 @@ class LDAP(Authentication):
         return True
 
     def _validate_ldap(self, username, password):
-        # Pre-check: user in group?
-        if username not in self._group:
+        # Pre-check: user in group or whitelist?
+        if username not in self._group and username not in self._whitelist:
             raise LoginException('User {} not in group'.format(username))
 
         # Next check: get DN from uid
