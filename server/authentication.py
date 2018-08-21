@@ -201,7 +201,7 @@ class LDAP(Authentication):
                                   self.config.get('ldap', 'manager_password'),
                                   search=self.config.get('ldap', 'group_dn'),
                                   search_attrs=[str(group_attr)])[0][1]
-        return result[group_attr]
+        return [username.decode('utf-8') for username in result[group_attr]]
 
     def _query_ldap(self, username, password, search=None, search_attrs=None):
         client = ldap.initialize(self.config.get('ldap', 'server'))
@@ -238,7 +238,7 @@ class LDAP(Authentication):
 
         # Retrieve DN and display name
         login_name = result[0]
-        display_name = result[1][display_name_field][0]
+        display_name = result[1][display_name_field][0].decode('utf-8')
 
         # Final check: log in
         if self._query_ldap(login_name, password):
@@ -247,5 +247,4 @@ class LDAP(Authentication):
         raise LoginException('Credentials invalid')
 
     def validate(self, username, password):
-        return self._validate_ldap(username.encode('utf-8'),
-                                   password.encode('utf-8'))
+        return self._validate_ldap(username, password)
