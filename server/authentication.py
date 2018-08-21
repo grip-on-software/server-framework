@@ -247,4 +247,5 @@ class LDAP(Authentication):
         raise LoginException('Credentials invalid')
 
     def validate(self, username, password):
-        return self._validate_ldap(username, password)
+        return self._validate_ldap(username.encode('utf-8'),
+                                   password.encode('utf-8'))
