@@ -22,6 +22,16 @@ class Bootstrap(object):
         self.args = None
 
     @property
+    def application_id(self):
+        """
+        Retrieve a short identifier for the application.
+
+        The application ID is used in session cookies.
+        """
+
+        return ''
+
+    @property
     def description(self):
         """
         Retrieve a descriptive message of the server to be used in command-line
@@ -55,6 +65,8 @@ class Bootstrap(object):
         parser.add_argument('--daemonize', action='store_true', default=False,
                             help='Run the server as a daemon')
         parser.add_argument('--pidfile', help='Store process ID in file')
+        parser.add_argument('--expiry', type=int, default=12 * 60,
+                            help='Number of minutes that session cookies are valid')
 
         server = parser.add_mutually_exclusive_group()
         server.add_argument('--fastcgi', action='store_true', default=False,
@@ -155,6 +167,9 @@ class Bootstrap(object):
             },
             '/': {
                 'tools.sessions.on': True,
+                'tools.sessions.name': '{}_session'.format(self.application_id),
+                'tools.sessions.httponly': True,
+                'tools.sessions.expiry': self.args.expiry,
                 'request.dispatch': HostDispatcher(host=self.args.host,
                                                    port=self.args.port)
             }
