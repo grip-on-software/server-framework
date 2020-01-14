@@ -49,7 +49,7 @@ pipeline {
                         pysh 'python -m pip install pylint'
                         pysh 'python -m pip install -r requirements.txt'
                         pysh 'sed -i "1s|.*|#!/usr/bin/env python|" `which pylint`'
-                        pysh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.branch=$BRANCH_NAME -Dsonar.python.pylint=`which pylint`'
+                        pysh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=server-framework:$BRANCH_NAME -Dsonar.projectName="Server framework $BRANCH_NAME" -Dsonar.python.pylint=`which pylint`'
                     }
                 }
             }
