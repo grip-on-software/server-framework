@@ -49,6 +49,20 @@ class Authenticated_Application(object):
             # Invalid method or not exposed
             raise cherrypy.HTTPError(400, 'Page must be valid')
 
+    def _perform_login(self, username, password):
+        try:
+            result = self.authentication.validate(username, password)
+            logging.info('Authenticated as %s', username)
+            if isinstance(result, basestring):
+                cherrypy.session['authenticated'] = result
+            else:
+                cherrypy.session['authenticated'] = username
+
+            return True
+        except LoginException as error:
+            logging.info(str(error))
+            return False
+
     def validate_login(self, username=None, password=None, page=None,
                        params=None):
         """
@@ -67,19 +81,11 @@ class Authenticated_Application(object):
             redirect += '&params={}'.format(params)
 
         if username is not None or password is not None:
-            if cherrypy.request.method == 'POST':
-                try:
-                    result = self.authentication.validate(username, password)
-                    logging.info('Authenticated as %s', username)
-                    if isinstance(result, basestring):
-                        cherrypy.session['authenticated'] = result
-                    else:
-                        cherrypy.session['authenticated'] = username
-                except LoginException as error:
-                    logging.info(str(error))
-                    raise cherrypy.HTTPRedirect(redirect)
-            else:
+            if cherrypy.request.method != 'POST':
                 raise cherrypy.HTTPError(400, 'POST only allowed for username and password')
+
+            if not self._perform_login(username, password):
+                raise cherrypy.HTTPRedirect(redirect)
 
         if 'authenticated' not in cherrypy.session:
             logging.info('No credentials or session found')
