@@ -11,7 +11,7 @@ def main():
     """
 
     setup(name='gros-server',
-          version='0.0.1',
+          version='0.0.2',
           description='Grip on Software server framework',
           long_description='''Web application framework for building
 authenticated services, with templating to avoid vulnerabilities.''',
