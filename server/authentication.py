@@ -1,8 +1,22 @@
 """
 Module that provides authentication schemes.
+
+Copyright 2017-2020 ICTU
+Copyright 2017-2022 Leiden University
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
-from builtins import object
 import crypt
 import logging
 import re
@@ -24,7 +38,7 @@ class LoginException(RuntimeError):
     Exception that indicates a login error.
     """
 
-class Authentication(object):
+class Authentication:
     """
     Authentication scheme.
     """
@@ -56,7 +70,7 @@ class Authentication(object):
         """
 
         if auth_type not in cls._auth_types:
-            raise RuntimeError('Authentication type {} is not supported'.format(auth_type))
+            raise RuntimeError(f'Authentication type {auth_type} is not supported')
 
         return cls._auth_types[auth_type]
 
@@ -92,7 +106,7 @@ class Open(Authentication):
     """
 
     def __init__(self, args, config):
-        super(Open, self).__init__(args, config)
+        super().__init__(args, config)
         if not args.debug:
             raise RuntimeError('Open authentication must not be used outside debug environment')
 
@@ -135,7 +149,7 @@ class Unix(Authentication):
     def validate(self, username, password):
         crypted_password = self.get_crypted_password(username)
         if crypted_password in ('', 'x', '*', '********'):
-            raise LoginException('Password is disabled for {}'.format(username))
+            raise LoginException(f'Password is disabled for {username}')
 
         if crypt.crypt(password, crypted_password) == crypted_password:
             return self.get_display_name(username)
@@ -149,15 +163,15 @@ class UnixPwd(Unix):
     """
 
     def __init__(self, args, config):
-        super(UnixPwd, self).__init__(args, config)
+        super().__init__(args, config)
         if pwd is None:
             raise ImportError('pwd not available on this platform')
 
     def get_crypted_password(self, username):
         try:
             return pwd.getpwnam(username).pw_passwd
-        except KeyError:
-            raise LoginException('User {} does not exist'.format(username))
+        except KeyError as error:
+            raise LoginException(f'User {username} does not exist') from error
 
 @Authentication.register('spwd')
 class UnixSpwd(Unix):
@@ -166,15 +180,15 @@ class UnixSpwd(Unix):
     """
 
     def __init__(self, args, config):
-        super(UnixSpwd, self).__init__(args, config)
+        super().__init__(args, config)
         if spwd is None:
             raise ImportError('spwd not available on this platform')
 
     def get_crypted_password(self, username):
         try:
             return spwd.getspnam(username).sp_pwd
-        except KeyError:
-            raise LoginException('User {} does not exist'.format(username))
+        except KeyError as error:
+            raise LoginException(f'User {username} does not exist') from error
 
 @Authentication.register('ldap')
 class LDAP(Authentication):
@@ -183,7 +197,7 @@ class LDAP(Authentication):
     """
 
     def __init__(self, args, config):
-        super(LDAP, self).__init__(args, config)
+        super().__init__(args, config)
         if ldap is None:
             raise ImportError('Unable to use LDAP; install the python-ldap package')
 
@@ -226,7 +240,7 @@ class LDAP(Authentication):
     def _validate_ldap(self, username, password):
         # Pre-check: user in group or whitelist?
         if username not in self._group and username not in self._whitelist:
-            raise LoginException('User {} not in group'.format(username))
+            raise LoginException(f'User {username} not in group')
 
         # Next check: get DN from uid
         search = self.config.get('ldap', 'search_filter').format(username)

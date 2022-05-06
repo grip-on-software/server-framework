@@ -1,5 +1,20 @@
 """
 Generic Web service bootstrapper.
+
+Copyright 2017-2020 ICTU
+Copyright 2017-2022 Leiden University
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import argparse
@@ -12,7 +27,7 @@ from gatherer.log import Log_Setup
 from .authentication import Authentication
 from .dispatcher import HostDispatcher
 
-class Bootstrap(object):
+class Bootstrap:
     """
     Server setup procedure.
     """
@@ -167,7 +182,7 @@ class Bootstrap(object):
             },
             '/': {
                 'tools.sessions.on': True,
-                'tools.sessions.name': '{}_session'.format(self.application_id),
+                'tools.sessions.name': f'{self.application_id}_session',
                 'tools.sessions.httponly': True,
                 'tools.sessions.expiry': self.args.expiry,
                 'request.dispatch': HostDispatcher(host=self.args.host,

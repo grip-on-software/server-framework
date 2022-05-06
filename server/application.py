@@ -1,15 +1,28 @@
 """
 Authenticated Web application framework.
+
+Copyright 2017-2020 ICTU
+Copyright 2017-2022 Leiden University
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
-from past.builtins import basestring
-from builtins import str, object
 import logging
 import cherrypy
 from requests.utils import quote
 from .authentication import LoginException, Authentication
 
-class Authenticated_Application(object):
+class Authenticated_Application:
     # pylint: disable=no-self-use
     """
     A Web application that requires authentication.
@@ -45,15 +58,15 @@ class Authenticated_Application(object):
 
         try:
             getattr(self, page).exposed
-        except AttributeError:
+        except AttributeError as error:
             # Invalid method or not exposed
-            raise cherrypy.HTTPError(400, 'Page must be valid')
+            raise cherrypy.HTTPError(400, 'Page must be valid') from error
 
     def _perform_login(self, username, password):
         try:
             result = self.authentication.validate(username, password)
             logging.info('Authenticated as %s', username)
-            if isinstance(result, basestring):
+            if isinstance(result, str):
                 cherrypy.session['authenticated'] = result
             else:
                 cherrypy.session['authenticated'] = username
@@ -76,9 +89,9 @@ class Authenticated_Application(object):
             params = quote(cherrypy.request.query_string)
 
         # Redirect on login failure
-        redirect = 'index?page={}'.format(page)
+        redirect = f'index?page={page}'
         if params != '' and page != '':
-            redirect += '&params={}'.format(params)
+            redirect += '&params={params}'
 
         if username is not None or password is not None:
             if cherrypy.request.method != 'POST':
@@ -104,7 +117,7 @@ class Authenticated_Application(object):
         self.validate_page(page)
 
         if params != '':
-            page += '?' + params
+            page += f'?{params}'
         raise cherrypy.HTTPRedirect(page)
 
     @cherrypy.expose
