@@ -8,6 +8,12 @@ namely the `deployer` and `status-dashboard` repositories.
 
 ## Building
 
+Some functionality is based on the data gathering modules and require a proper 
+installation of that package. If a PyPI registry is defined (possibly with 
+a `PIP_REGISTRY` environment variable) and a proper installation location (such 
+as a virtual environment) is known, the dependencies may be installed using 
+`pip install -r requirements.txt`.
+
 Use `python setup.py sdist` followed by `python setup.py bdist_wheel` in order 
 to generate a wheel package for the framework. The files can then be found in 
 the `dist` directory (and installed from there using `pip install <path>`).
