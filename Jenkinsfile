@@ -35,14 +35,6 @@ pipeline {
             }
         }
         stage('SonarQube Analysis') {
-            when {
-                anyOf {
-                    expression {
-                        currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause) != null
-                    }
-                    not { branch 'master' }
-                }
-            }
             steps {
                 withCredentials([string(credentialsId: 'pypi-repository', variable: 'PIP_REGISTRY'), file(credentialsId: 'pypi-certificate', variable: 'PIP_CERTIFICATE')]) {
                     withPythonEnv('System-CPython-3') {
