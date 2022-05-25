@@ -20,6 +20,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!typeshed/*/lib/
 lib64/
 parts/
 sdist/
