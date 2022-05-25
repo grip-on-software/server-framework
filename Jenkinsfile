@@ -44,13 +44,16 @@ pipeline {
                 }
             }
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withCredentials([string(credentialsId: 'pypi-repository', variable: 'PIP_REGISTRY'), file(credentialsId: 'pypi-certificate', variable: 'PIP_CERTIFICATE')]) {
                     withPythonEnv('System-CPython-3') {
-                        pysh 'python -m pip install pylint'
-                        pysh 'python -m pip install -r requirements.txt'
-                        pysh 'sed -i "1s|.*|#!/usr/bin/env python|" `which pylint`'
-                        pysh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=server-framework:$BRANCH_NAME -Dsonar.projectName="Server framework $BRANCH_NAME" -Dsonar.python.pylint=`which pylint`'
+                        pysh 'python -m pip install pylint mypy lxml certifi'
+                        pysh 'python -m pip install $(python make_pip_args.py $PIP_REGISTRY $PIP_CERTIFICATE) -r requirements.txt'
+                        pysh 'mypy server --html-report mypy-report --cobertura-xml-report mypy-report --junit-xml mypy-report/junit.xml --no-incremental --show-traceback || true'
+                        pysh 'python -m pylint server --exit-zero --reports=n --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" -d duplicate-code > pylint-report.txt'
                     }
+                }
+                withSonarQubeEnv('SonarQube') {
+                    sh '${SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=server-framework:$BRANCH_NAME -Dsonar.projectName="Server framework $BRANCH_NAME"'
                 }
             }
         }

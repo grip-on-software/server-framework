@@ -17,9 +17,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from argparse import Namespace
+from configparser import RawConfigParser
 import logging
+from typing import Any, Optional
+from urllib.parse import quote
 import cherrypy
-from requests.utils import quote
 from .authentication import LoginException, Authentication
 
 class Authenticated_Application:
@@ -28,12 +31,12 @@ class Authenticated_Application:
     A Web application that requires authentication.
     """
 
-    def __init__(self, args, config):
+    def __init__(self, args: Namespace, config: RawConfigParser):
         auth_type = Authentication.get_type(args.auth)
         self.authentication = auth_type(args, config)
 
     @cherrypy.expose
-    def index(self, page='list', params=''):
+    def index(self, page: str = 'list', params: str = '') -> str:
         """
         Login form.
         """
@@ -41,7 +44,7 @@ class Authenticated_Application:
         raise NotImplementedError("Must be implemented by subclasses")
 
     @cherrypy.expose
-    def logout(self):
+    def logout(self) -> str:
         """
         Log out the user.
         """
@@ -51,9 +54,10 @@ class Authenticated_Application:
 
         raise cherrypy.HTTPRedirect('index')
 
-    def validate_page(self, page):
+    def validate_page(self, page: str) -> None:
         """
-        Validate a page identifier.
+        Validate a page identifier. Raises an `HTTPError` if the page is
+        not an existing exposed route.
         """
 
         try:
@@ -62,7 +66,7 @@ class Authenticated_Application:
             # Invalid method or not exposed
             raise cherrypy.HTTPError(400, 'Page must be valid') from error
 
-    def _perform_login(self, username, password):
+    def _perform_login(self, username: str, password: str) -> bool:
         try:
             result = self.authentication.validate(username, password)
             logging.info('Authenticated as %s', username)
@@ -76,10 +80,14 @@ class Authenticated_Application:
             logging.info(str(error))
             return False
 
-    def validate_login(self, username=None, password=None, page=None,
-                       params=None):
+    def validate_login(self, username: Optional[str] = None,
+                       password: Optional[str] = None,
+                       page: Optional[str] = None,
+                       params: Optional[str] = None) -> None:
         """
-        Validate a login request.
+        Validate a login request with the `username` and `password`. Raises an
+        `HTTPError` if the login is not accepted, possibly being redirected to
+        the index with the `page` and the `params` as query string.
         """
 
         if page is None:
@@ -97,6 +105,7 @@ class Authenticated_Application:
             if cherrypy.request.method != 'POST':
                 raise cherrypy.HTTPError(400, 'POST only allowed for username and password')
 
+        if username is not None and password is not None:
             if not self._perform_login(username, password):
                 raise cherrypy.HTTPRedirect(redirect)
 
@@ -105,9 +114,12 @@ class Authenticated_Application:
             raise cherrypy.HTTPRedirect(redirect)
 
     @cherrypy.expose
-    def login(self, username=None, password=None, page='list', params=''):
+    def login(self, username: Optional[str] = None,
+              password: Optional[str] = None, page: str = 'list',
+              params: str = '') -> str:
         """
-        Log in the user.
+        Log in the user with the given `username` and `password`. Upon success,
+        a redirect to the `page` with the `params` in the query string is made.
         """
 
         self.validate_login(username=username, password=password, page=page,
@@ -121,7 +133,7 @@ class Authenticated_Application:
         raise cherrypy.HTTPRedirect(page)
 
     @cherrypy.expose
-    def default(self, *args, **kwargs):
+    def default(self, *args: Any, **kwargs: Any) -> str:
         # pylint: disable=unused-argument
         """
         Default handler for nonexistent pages. These are redirected to the

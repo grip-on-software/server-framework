@@ -28,3 +28,8 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Analysis
+.mypy_cache/
+mypy-report/
+pylint-report.txt

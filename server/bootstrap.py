@@ -17,9 +17,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import argparse
+from argparse import ArgumentParser, Namespace
 import logging.config
-import os
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
 import cherrypy
 import cherrypy.daemon
 from gatherer.config import Configuration
@@ -34,10 +35,10 @@ class Bootstrap:
 
     def __init__(self):
         self.config = Configuration.get_settings()
-        self.args = None
+        self._args: Optional[Namespace] = None
 
     @property
-    def application_id(self):
+    def application_id(self) -> str:
         """
         Retrieve a short identifier for the application.
 
@@ -47,7 +48,7 @@ class Bootstrap:
         return ''
 
     @property
-    def description(self):
+    def description(self) -> str:
         """
         Retrieve a descriptive message of the server to be used in command-line
         help text.
@@ -55,17 +56,29 @@ class Bootstrap:
 
         raise NotImplementedError('Must be overridden by subclasses')
 
-    def _parse_args(self):
+    @property
+    def args(self) -> Namespace:
+        """
+        Retrieve the arguments. If the setup has not been bootstrapped, this
+        raises a `RuntimeError`.
+        """
+
+        if self._args is None:
+            raise RuntimeError('Not yet bootstrapped')
+
+        return self._args
+
+    def _parse_args(self) -> Namespace:
         """
         Parse command line arguments.
         """
 
         # Default authentication scheme
-        auth = self.config.get('deploy', 'auth')
+        auth: Optional[str] = self.config.get('deploy', 'auth')
         if not Configuration.has_value(auth):
             auth = 'ldap'
 
-        parser = argparse.ArgumentParser(description=self.description)
+        parser = ArgumentParser(description=self.description)
         Log_Setup.add_argument(parser, default='INFO')
         parser.add_argument('--debug', action='store_true', default=False,
                             help='Display logging in terminal and traces on web')
@@ -94,31 +107,32 @@ class Bootstrap:
         self.add_args(parser)
         return parser.parse_args()
 
-    def add_args(self, parser):
+    def add_args(self, parser: ArgumentParser) -> None:
         """
         Register additional arguments to the argument parser.
         """
 
         raise NotImplementedError('Must be overridden by subclasses')
 
-    def _build_log_file_handler(self, filename):
+    def _build_log_file_handler(self, filename: str) \
+        -> Dict[str, Union[str, int]]:
         return {
-            'level': self.args.log,
+            'level': str(self.args.log),
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(self.args.log_path, filename),
+            'filename': str(Path(self.args.log_path) / filename),
             'formatter': 'void',
             'maxBytes': 10485760,
             'backupCount': 20,
             'encoding': 'utf8'
         }
 
-    def _setup_log(self):
+    def _setup_log(self) -> None:
         """
         Setup logging.
         """
 
         stream_handler = {
-            'level': self.args.log,
+            'level': str(self.args.log),
             'class':'logging.StreamHandler',
             'formatter': 'standard',
             'stream': 'ext://sys.stdout'
@@ -148,19 +162,19 @@ class Bootstrap:
                 },
                 'cherrypy.access': {
                     'handlers': ['cherrypy_console' if self.args.debug else 'cherrypy_access'],
-                    'level': self.args.log,
+                    'level': str(self.args.log),
                     'propagate': False
                 },
                 'cherrypy.error': {
                     'handlers': ['cherrypy_console' if self.args.debug else 'cherrypy_error'],
-                    'level': self.args.log,
+                    'level': str(self.args.log),
                     'propagate': False
                 },
             }
         }
         logging.config.dictConfig(config)
 
-    def mount(self, conf):
+    def mount(self, conf: Dict[str, Dict[str, Any]]) -> None:
         """
         Mount the application on the server. `conf` is a dictionary of cherrypy
         configuration sections with which the application can be configured.
@@ -168,13 +182,13 @@ class Bootstrap:
 
         raise NotImplementedError('Must be implemented by subclasses')
 
-    def bootstrap(self):
+    def bootstrap(self) -> None:
         """
         Start the WSGI server.
         """
 
         # Setup arguments and configuration
-        self.args = self._parse_args()
+        self._args = self._parse_args()
         self._setup_log()
         conf = {
             'global': {
