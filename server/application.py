@@ -101,13 +101,13 @@ class Authenticated_Application:
         if params != '' and page != '':
             redirect += '&params={params}'
 
-        if username is not None or password is not None:
-            if cherrypy.request.method != 'POST':
-                raise cherrypy.HTTPError(400, 'POST only allowed for username and password')
+        if (username is not None or password is not None) and \
+            cherrypy.request.method != 'POST':
+            raise cherrypy.HTTPError(400, 'POST only allowed for username and password')
 
-        if username is not None and password is not None:
-            if not self._perform_login(username, password):
-                raise cherrypy.HTTPRedirect(redirect)
+        if username is not None and password is not None and \
+            not self._perform_login(username, password):
+            raise cherrypy.HTTPRedirect(redirect)
 
         if 'authenticated' not in cherrypy.session:
             logging.info('No credentials or session found')
