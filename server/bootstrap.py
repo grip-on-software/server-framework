@@ -33,7 +33,7 @@ class Bootstrap:
     Server setup procedure.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = Configuration.get_settings()
         self._args: Optional[Namespace] = None
 
