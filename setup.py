@@ -4,6 +4,7 @@ Package setup script.
 
 Copyright 2017-2020 ICTU
 Copyright 2017-2022 Leiden University
+Copyright 2017-2023 Leon Helwerda
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,7 +33,7 @@ def main():
 authenticated services, with templating to avoid vulnerabilities.''',
           author='Leon Helwerda',
           author_email='l.s.helwerda@liacs.leidenuniv.nl',
-          url='',
+          url='https://github.com/grip-on-software/server-framework',
           license='Apache 2.0',
           packages=find_packages(),
           package_data={'server': ['py.typed']},
@@ -43,8 +44,16 @@ authenticated services, with templating to avoid vulnerabilities.''',
               'ldap': ['python-ldap']
           },
           dependency_links=[],
-          classifiers=[],
-          keywords=[])
+          classifiers=[
+              'Development Status :: 3 - Alpha',
+              'Environment :: Web Environment',
+              'Intended Audience :: Developers',
+              'Topic :: Internet :: WWW/HTTP :: HTTP Servers',
+              'License :: OSI Approved :: Apache Software License',
+              'Operating System :: OS Independent',
+              'Programming Language :: Python :: 3'
+          ],
+          keywords='gros server framework authentication templates')
 
 if __name__ == '__main__':
     main()
