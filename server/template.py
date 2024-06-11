@@ -20,7 +20,7 @@ limitations under the License.
 
 from html import escape
 import string
-from typing import Any
+from typing import Any, Optional
 from urllib.parse import quote
 
 class Template(string.Formatter):
@@ -29,7 +29,7 @@ class Template(string.Formatter):
     type and URL encoding using the 'u' conversion type.
     """
 
-    def convert_field(self, value: Any, conversion: str) -> Any:
+    def convert_field(self, value: Any, conversion: Optional[str]) -> Any:
         if conversion == 'h':
             return escape(value)
         if conversion == 'u':

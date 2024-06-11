@@ -112,7 +112,8 @@ class Authentication:
 @Authentication.register('open')
 class Open(Authentication):
     """
-    Open login authentication which accepts all user/password combinations.
+    Open login authentication which accepts all user/password combinations
+    except for an empty username.
 
     Only to be used in debugging environments.
     """
@@ -123,7 +124,7 @@ class Open(Authentication):
             raise RuntimeError('Open authentication must not be used outside debug environment')
 
     def validate(self, username: str, password: str) -> Validation:
-        return True
+        return username != ''
 
 class Unix(Authentication):
     """

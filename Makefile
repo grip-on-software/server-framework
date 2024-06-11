@@ -1,14 +1,17 @@
+COVERAGE=coverage
 MYPY=mypy
 PIP=python -m pip
 PYLINT=pylint
 RM=rm -rf
+TEST=-m pytest -s test
+TEST_OUTPUT=--junit-xml=test-reports/TEST-pytest.xml
 TWINE=twine
 
 .PHONY: all
-all: mypy pylint
+all: coverage mypy pylint
 
 .PHONY: release
-release: mypy pylint clean build tag push upload
+release: test mypy pylint clean build tag push upload
 
 .PHONY: setup
 setup:
@@ -22,22 +25,42 @@ setup_release:
 setup_analysis:
 	$(PIP) install -r requirements-analysis.txt
 
+.PHONY: setup_test
+setup_test:
+	$(PIP) install -r requirements-test.txt
+
 .PHONY: install
 install:
 	python setup.py install
 
 .PHONY: pylint
 pylint:
-	$(PYLINT) server setup.py --exit-zero --reports=n \
+	$(PYLINT) server test setup.py --exit-zero --reports=n \
 		--msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" \
 		-d duplicate-code
 
 .PHONY: mypy
 mypy:
-	$(MYPY) server setup.py \
+	$(MYPY) server test setup.py \
 		--cobertura-xml-report mypy-report \
 		--junit-xml mypy-report/TEST-junit.xml \
 		--no-incremental --show-traceback
+
+.PHONY: test
+test:
+	python $(TEST) $(TEST_OUTPUT)
+
+.PHONY: coverage
+coverage:
+	$(COVERAGE) run --source=server,test $(TEST) $(TEST_OUTPUT)
+	$(COVERAGE) report -m
+	$(COVERAGE) xml -i -o test-reports/cobertura.xml
+
+# Version of the coverage target that does not write JUnit/cobertura XML output
+.PHONY: cover
+cover:
+	$(COVERAGE) run --source=server,test $(TEST)
+	$(COVERAGE) report -m
 
 .PHONY: get_version
 get_version: get_setup_version get_init_version get_sonar_version get_citation_version

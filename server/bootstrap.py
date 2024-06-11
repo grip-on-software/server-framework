@@ -21,6 +21,7 @@ limitations under the License.
 from argparse import ArgumentParser, Namespace
 import logging.config
 from pathlib import Path
+import sys
 from typing import Any, Dict, Optional, Union
 import cherrypy
 import cherrypy.daemon
@@ -106,7 +107,7 @@ class Bootstrap:
                             help='Start a CGI server instead of the HTTP')
 
         self.add_args(parser)
-        return parser.parse_args()
+        return parser.parse_args(args=sys.argv[1:])
 
     def add_args(self, parser: ArgumentParser) -> None:
         """
