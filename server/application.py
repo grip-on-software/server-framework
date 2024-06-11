@@ -27,7 +27,6 @@ import cherrypy
 from .authentication import LoginException, Authentication
 
 class Authenticated_Application:
-    # pylint: disable=no-self-use
     """
     A Web application that requires authentication.
     """

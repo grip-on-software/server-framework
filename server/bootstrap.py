@@ -132,8 +132,11 @@ class Bootstrap:
         Setup logging.
         """
 
+        log_level = str(self.args.log)
+        debug = bool(self.args.debug)
+
         stream_handler = {
-            'level': str(self.args.log),
+            'level': log_level,
             'class':'logging.StreamHandler',
             'formatter': 'standard',
             'stream': 'ext://sys.stdout'
@@ -158,17 +161,17 @@ class Bootstrap:
             },
             'loggers': {
                 '': {
-                    'handlers': ['default' if self.args.debug else 'python'],
-                    'level': self.args.log
+                    'handlers': ['default' if debug else 'python'],
+                    'level': log_level
                 },
                 'cherrypy.access': {
-                    'handlers': ['cherrypy_console' if self.args.debug else 'cherrypy_access'],
-                    'level': str(self.args.log),
+                    'handlers': ['cherrypy_console' if debug else 'cherrypy_access'],
+                    'level': log_level,
                     'propagate': False
                 },
                 'cherrypy.error': {
-                    'handlers': ['cherrypy_console' if self.args.debug else 'cherrypy_error'],
-                    'level': str(self.args.log),
+                    'handlers': ['cherrypy_console' if debug else 'cherrypy_error'],
+                    'level': log_level,
                     'propagate': False
                 },
             }

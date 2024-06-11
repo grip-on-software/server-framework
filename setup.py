@@ -40,6 +40,7 @@ authenticated services, with templating to avoid vulnerabilities.''',
           entry_points={},
           include_package_data=True,
           install_requires=['cherrypy'],
+          python_requires='>=3',
           extras_require={
               'ldap': ['python-ldap']
           },
@@ -51,7 +52,12 @@ authenticated services, with templating to avoid vulnerabilities.''',
               'Topic :: Internet :: WWW/HTTP :: HTTP Servers',
               'License :: OSI Approved :: Apache Software License',
               'Operating System :: OS Independent',
-              'Programming Language :: Python :: 3'
+              'Programming Language :: Python :: 3',
+              'Programming Language :: Python :: 3.8',
+              'Programming Language :: Python :: 3.9',
+              'Programming Language :: Python :: 3.10',
+              'Programming Language :: Python :: 3.11',
+              'Programming Language :: Python :: 3.12',
           ],
           keywords='gros server framework authentication templates')
 

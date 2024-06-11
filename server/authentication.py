@@ -146,8 +146,6 @@ class Unix(Authentication):
         If the display name is unavailable, then the username is returned.
         """
 
-        # pylint: disable=no-self-use
-
         try:
             display_name = pwd.getpwnam(username).pw_gecos.split(',', 1)[0]
         except KeyError:
