@@ -39,10 +39,15 @@ authenticated services, with templating to avoid vulnerabilities.''',
           package_data={'server': ['py.typed']},
           entry_points={},
           include_package_data=True,
-          install_requires=['cherrypy'],
-          python_requires='>=3',
+          install_requires=[
+              'CherryPy==18.9.0',
+              'flup==1.0.3',
+              'requests==2.27.1',
+              'gros-gatherer==0.0.3',
+          ],
+          python_requires='>=3.8',
           extras_require={
-              'ldap': ['python-ldap']
+              'ldap': ['python-ldap==3.4.3']
           },
           dependency_links=[],
           classifiers=[
