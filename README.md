@@ -4,14 +4,15 @@ This repository contains a framework for setting up a Web application based on
 Python modules, using [CherryPy](https://cherrypy.dev/) for routing.
 
 This framework is used for a few servers within the Grip on Software pipeline, 
-namely the `deployer` and `status-dashboard` repositories.
+namely the [deployer](https://github.com/grip-on-software/deployer) and 
+[status-dashboard](https://github.com/grip-on-software/status-dashboard) 
+repositories.
 
 ## Building
 
-Some functionality is based on the data gathering modules and require a proper 
-installation of that package. If a PyPI registry is defined (possibly with 
-a `PIP_REGISTRY` environment variable) and a proper installation location (such 
-as a virtual environment) is known, the dependencies may be installed using 
+Some functionality of the server framework is based on the [data gathering 
+module](https://pypi.org/project/gros-gatherer/) and requires a proper 
+installation of that package. It and other dependencies may be installed using 
 `pip install -r requirements.txt`.
 
 Use `python setup.py sdist` followed by `python setup.py bdist_wheel` in order 
