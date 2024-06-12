@@ -36,3 +36,8 @@ mypy-report/
 
 # Pylint
 pylint-report.txt
+
+# Unit tests and coverage
+.coverage
+htmlcov/
+test-reports/

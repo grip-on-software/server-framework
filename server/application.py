@@ -69,6 +69,9 @@ class Authenticated_Application:
     def _perform_login(self, username: str, password: str) -> bool:
         try:
             result = self.authentication.validate(username, password)
+            if not result:
+                raise LoginException('Credentials rejected')
+
             logging.info('Authenticated as %s', username)
             if isinstance(result, str):
                 cherrypy.session['authenticated'] = result
@@ -99,7 +102,7 @@ class Authenticated_Application:
         # Redirect on login failure
         redirect = f'index?page={page}'
         if params != '' and page != '':
-            redirect += '&params={params}'
+            redirect += f'&params={params}'
 
         if (username is not None or password is not None) and \
             cherrypy.request.method != 'POST':

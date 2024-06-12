@@ -21,7 +21,7 @@ limitations under the License.
 
 from setuptools import setup, find_packages
 
-def main():
+def main() -> None:
     """
     Setup the package.
     """
