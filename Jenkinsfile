@@ -44,8 +44,8 @@ pipeline {
                     withPythonEnv('System-CPython-3') {
                         pysh 'python -m pip install lxml certifi'
                         pysh 'python -m pip install $(python make_pip_args.py $PIP_REGISTRY $PIP_CERTIFICATE) -r requirements-analysis.txt'
-                        pysh 'mypy server --html-report mypy-report --cobertura-xml-report mypy-report --junit-xml mypy-report/junit.xml --no-incremental --show-traceback || true'
-                        pysh 'python -m pylint server --exit-zero --reports=n --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" -d duplicate-code > pylint-report.txt'
+                        pysh 'make mypy_html'
+                        pysh 'make pylint'
                     }
                 }
                 withSonarQubeEnv('SonarQube') {
@@ -56,22 +56,21 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
-                    image 'python:3.7-alpine3.13'
+                    image 'python:3.8-alpine3.18'
                     reuseNode true
                 }
             }
             steps {
-                sh 'python setup.py sdist'
-                sh 'python setup.py bdist_wheel'
+                sh 'make build'
             }
         }
         stage('Push') {
             when { branch 'master' }
             steps {
                 withPythonEnv('System-CPython-3') {
-                    pysh 'python -m pip install twine'
+                    pysh 'make setup_release'
                     withCredentials([usernamePassword(credentialsId: 'pypi-credentials', passwordVariable: 'TWINE_PASSWORD', usernameVariable: 'TWINE_USERNAME'), string(credentialsId: 'pypi-repository', variable: 'TWINE_REPOSITORY_URL'), file(credentialsId: 'pypi-certificate', variable: 'TWINE_CERT')]) {
-                        pysh 'python -m twine upload dist/*'
+                        pysh 'make upload'
                     }
                 }
             }

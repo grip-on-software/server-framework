@@ -57,7 +57,10 @@ for coverage history.
 
 The Python module conforms to code style and typing standards which can be 
 checked using Pylint with `make pylint` and mypy with `make mypy`, after 
-installing the pylint and mypy dependencies using `make setup_analysis`.
+installing the pylint and mypy dependencies using `make setup_analysis`; typing 
+reports are XML formats compatible with JUnit and SonarQube placed in the 
+`mypy-report/` directory. To also receive the HTML report, use `make mypy_html` 
+instead.
 
 We publish releases to [PyPI](https://pypi.org/project/gros-server/) using 
 `make setup_release` to install dependencies and `make release` which performs 

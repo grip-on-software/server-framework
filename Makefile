@@ -3,6 +3,8 @@ MYPY=mypy
 PIP=python -m pip
 PYLINT=pylint
 RM=rm -rf
+SOURCES_ANALYSIS=server test
+SOURCES_COVERAGE=server,test
 TEST=-m pytest -s test
 TEST_OUTPUT=--junit-xml=test-reports/TEST-pytest.xml
 TWINE=twine
@@ -31,17 +33,25 @@ setup_test:
 
 .PHONY: install
 install:
-	python setup.py install
+	$(PIP) install .
 
 .PHONY: pylint
 pylint:
-	$(PYLINT) server test setup.py --exit-zero --reports=n \
+	$(PYLINT) $(SOURCES_ANALYSIS) --exit-zero --reports=n \
 		--msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" \
 		-d duplicate-code
 
 .PHONY: mypy
 mypy:
-	$(MYPY) server test setup.py \
+	$(MYPY) $(SOURCES_ANALYSIS) \
+		--cobertura-xml-report mypy-report \
+		--junit-xml mypy-report/TEST-junit.xml \
+		--no-incremental --show-traceback
+
+.PHONY: mypy_html
+mypy_html:
+	$(MYPY) $(SOURCES_ANALYSIS) \
+		--html-report mypy-report \
 		--cobertura-xml-report mypy-report \
 		--junit-xml mypy-report/TEST-junit.xml \
 		--no-incremental --show-traceback
@@ -52,23 +62,23 @@ test:
 
 .PHONY: coverage
 coverage:
-	$(COVERAGE) run --source=server,test $(TEST) $(TEST_OUTPUT)
+	$(COVERAGE) run --source=$(SOURCES_COVERAGE) $(TEST) $(TEST_OUTPUT)
 	$(COVERAGE) report -m
 	$(COVERAGE) xml -i -o test-reports/cobertura.xml
 
 # Version of the coverage target that does not write JUnit/cobertura XML output
 .PHONY: cover
 cover:
-	$(COVERAGE) run --source=server,test $(TEST)
+	$(COVERAGE) run --source=$(SOURCES_COVERAGE) $(TEST)
 	$(COVERAGE) report -m
 
 .PHONY: get_version
-get_version: get_setup_version get_init_version get_sonar_version get_citation_version
-	if [ "${SETUP_VERSION}" != "${INIT_VERSION}" ] || [ "${SETUP_VERSION}" != "${SONAR_VERSION}" ] || [ "${SETUP_VERSION}" != "${CITATION_VERSION}" ]; then \
+get_version: get_toml_version get_init_version get_sonar_version get_citation_version
+	if [ "${TOML_VERSION}" != "${INIT_VERSION}" ] || [ "${TOML_VERSION}" != "${SONAR_VERSION}" ] || [ "${TOML_VERSION}" != "${CITATION_VERSION}" ]; then \
 		echo "Version mismatch"; \
 		exit 1; \
 	fi
-	$(eval VERSION=$(SETUP_VERSION))
+	$(eval VERSION=$(TOML_VERSION))
 
 .PHONY: get_init_version
 get_init_version:
@@ -79,10 +89,10 @@ get_init_version:
 		exit 1; \
 	fi
 
-.PHONY: get_setup_version
-get_setup_version:
-	$(eval SETUP_VERSION=v$(shell python setup.py --version))
-	$(info Version in setup.py: $(SETUP_VERSION))
+.PHONY: get_toml_version
+get_toml_version:
+	$(eval TOML_VERSION=v$(shell grep "^version" pyproject.toml | sed -E "s/version = .([0-9.]+)./\\1/"))
+	$(info Version in pyproject.toml: $(TOML_VERSION))
 
 .PHONY: get_sonar_version
 get_sonar_version:
@@ -100,8 +110,7 @@ tag: get_version
 
 .PHONY: build
 build:
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python -m build
 
 .PHONY: push
 push: get_version

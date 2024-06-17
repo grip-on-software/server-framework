@@ -1,0 +1,56 @@
+[project]
+name = "gros-server"
+version = "0.0.3"
+description = "Grip on Software server framework"
+readme = "README.md"
+authors = [{name = "Leon Helwerda", email = "l.s.helwerda@liacs.leidenuniv.nl"}]
+license = {text = "Apache 2.0"}
+requires-python = ">=3.8"
+dependencies = [
+    "CherryPy==18.9.0",
+    "flup==1.0.3",
+    "requests==2.27.1",
+    "gros-gatherer==0.0.3"
+]
+classifiers=[
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["server framework", "authentication", "templates"]
+
+[project.urls]
+"Homepage" = "https://gros.liacs.nl"
+"PyPI" = "https://pypi.python.org/pypi/gros-server"
+"Source Code" = "https://github.com/grip-on-software/server-framework"
+"Issues" = "https://github.com/grip-on-software/server-framework/issues"
+"Pull Requests" = "https://github.com/grip-on-software/server-framework/pulls"
+"CI: GitHub Actions" = "https://github.com/grip-on-software/server-framework/actions"
+"CI: Coveralls" = "https://coveralls.io/github/grip-on-software/server-framework?branch=master"
+"CI: SonarCloud" = "https://sonarcloud.io/project/overview?id=grip-on-software_server-framework"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["server"]
+
+[tool.setuptools.package-data]
+"gatherer" = ["py.typed"]
+
+[tool.mypy]
+mypy_path = "typeshed"
+
+[tool.pytest.ini_options]
+testpaths = "test"
+python_files = "*.py"
