@@ -46,7 +46,7 @@ build-backend = "setuptools.build_meta"
 where = ["server"]
 
 [tool.setuptools.package-data]
-"gatherer" = ["py.typed"]
+"server" = ["py.typed"]
 
 [tool.mypy]
 mypy_path = "typeshed"
