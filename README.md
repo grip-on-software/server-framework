@@ -68,4 +68,5 @@ multiple checks: unit tests, typing, lint and version number consistency. The
 release files are also published on 
 [GitHub](https://github.com/grip-on-software/server-framework/releases) and 
 from there are archived on 
-[Zenodo](https://zenodo.org/doi/10.5281/zenodo.11580149).
+[Zenodo](https://zenodo.org/doi/10.5281/zenodo.11580149). Noteworthy changes to 
+the module are added to the [changelog](CHANGELOG.md).
