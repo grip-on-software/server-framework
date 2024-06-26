@@ -42,8 +42,8 @@ keywords = ["server framework", "authentication", "templates"]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-where = ["server"]
+[tool.setuptools]
+packages = ["server"]
 
 [tool.setuptools.package-data]
 "server" = ["py.typed"]
