@@ -24,6 +24,8 @@ jobs:
         run: make setup_test
       - name: Unit test and coverage
         run: make coverage
+        env:
+          WEBTEST_INTERACTIVE: "False"
       - name: Mypy typing coverage
         run: |
           make setup_analysis
