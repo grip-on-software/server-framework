@@ -7,9 +7,11 @@ and we adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.0] - 2024-07-15
+
 ### Added
 
-- Unit tests for `application`, `authentication` base and Open scheme, 
+- Unit tests for `application`, `authentication` base, LDAP and Open scheme, 
   `bootstrap`, `dispatcher` and `template` modules added.
 
 ### Changed
@@ -41,6 +43,8 @@ and we adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Support for Python 2.7 dropped.
 
 [Unreleased]: 
-https://github.com/grip-on-software/server-framework/compare/v0.0.3...HEAD
+https://github.com/grip-on-software/server-framework/compare/v1.0.0...HEAD
+[1.0.0]: 
+https://github.com/grip-on-software/server-framework/compare/v0.0.3...v1.0.0
 [0.0.3]: 
 https://github.com/grip-on-software/server-framework/releases/tag/v0.0.3

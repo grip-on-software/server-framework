@@ -1,6 +1,6 @@
 [project]
 name = "gros-server"
-version = "0.0.3"
+version = "1.0.0"
 description = "Grip on Software server framework"
 readme = "README.md"
 authors = [{name = "Leon Helwerda", email = "l.s.helwerda@liacs.leidenuniv.nl"}]
@@ -10,10 +10,10 @@ dependencies = [
     "CherryPy==18.9.0",
     "flup==1.0.3",
     "requests==2.27.1",
-    "gros-gatherer==0.0.3"
+    "gros-gatherer==1.0.0"
 ]
 classifiers=[
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",

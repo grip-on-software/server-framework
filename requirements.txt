@@ -1,5 +1,5 @@
 CherryPy==18.9.0
 flup==1.0.3
 requests==2.27.1
-gros-gatherer==0.0.3
+gros-gatherer==1.0.0
 python-ldap==3.4.3
