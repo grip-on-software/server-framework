@@ -9,7 +9,6 @@ requires-python = ">=3.8"
 dependencies = [
     "CherryPy==18.9.0",
     "flup==1.0.3",
-    "requests==2.27.1",
     "gros-gatherer==1.0.0"
 ]
 classifiers=[
