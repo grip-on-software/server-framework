@@ -11,6 +11,8 @@ and we adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Server header now reports modules in decreasing order of significance, with 
   no versions specified outside debug.
+- Package can be installed with optional dependencies with the `ldap` extra 
+  using `pip install gros-server[ldap]` again.
 
 ## [1.0.0] - 2024-07-15
 

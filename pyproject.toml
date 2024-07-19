@@ -27,6 +27,9 @@ classifiers=[
 ]
 keywords = ["server framework", "authentication", "templates"]
 
+[project.optional-dependencies]
+ldap = ["python-ldap==3.4.3"]
+
 [project.urls]
 "Homepage" = "https://gros.liacs.nl"
 "PyPI" = "https://pypi.python.org/pypi/gros-server"

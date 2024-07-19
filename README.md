@@ -20,7 +20,8 @@ repositories.
 ## Installation and building
 
 The latest version of GROS server framework module and its dependencies can be 
-installed using `pip install gros-server`.
+installed using `pip install gros-server`. In order to use LDAP as the 
+authentication scheme, use `pip install gros-server[ldap]`.
 
 Another option is to build the module from this repository, which allows using 
 the most recent development code. Some functionality of the server framework is 
