@@ -27,6 +27,7 @@ import cherrypy
 import cherrypy.daemon
 from gatherer.config import Configuration
 from gatherer.log import Log_Setup
+from . import __version__ as VERSION
 from .authentication import Authentication
 from .dispatcher import HostDispatcher
 
@@ -195,6 +196,10 @@ class Bootstrap:
         # Setup arguments and configuration
         self._args = self._parse_args()
         self._setup_log()
+        if self.args.debug:
+            server = f'gros-server/{VERSION} CherryPy/{cherrypy.__version__}'
+        else:
+            server = 'gros-server CherryPy'
         conf = {
             'global': {
                 'request.show_tracebacks': self.args.debug
@@ -205,7 +210,8 @@ class Bootstrap:
                 'tools.sessions.httponly': True,
                 'tools.sessions.expiry': self.args.expiry,
                 'request.dispatch': HostDispatcher(host=self.args.host,
-                                                   port=self.args.port)
+                                                   port=self.args.port),
+                'response.headers.server': server
             }
         }
         cherrypy.config.update({'server.socket_port': self.args.port})

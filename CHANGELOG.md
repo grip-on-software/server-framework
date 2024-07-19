@@ -7,6 +7,11 @@ and we adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Server header now reports modules in decreasing order of significance, with 
+  no versions specified outside debug.
+
 ## [1.0.0] - 2024-07-15
 
 ### Added

@@ -2,6 +2,8 @@ from typing import Any, Callable, Dict, List, Optional, TextIO, TypeVar, Union
 from . import dispatch, lib
 from . import _cptree
 
+__version__: str
+
 class HTTPError(Exception):
     def __call__(self) -> 'ResponseBody': ...
 
